@@ -26,9 +26,9 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
   return Array.from({length: 7}, (v, i) => i)
     .map(n => {
       const currentDate = addDays(date, n);
-      const opening = openings.find(o => isSameDay(o.starts_at, currentDate));
+      const dayOpenings = openings.filter(o => isSameDay(o.starts_at, currentDate));
 
-      if (opening == null) {
+      if (!dayOpenings.length) {
         return ({
           date: currentDate,
           slots: []
@@ -37,12 +37,20 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
 
       return ({
         date: currentDate,
-        slots: generateSlots(opening.starts_at, opening.ends_at)
+        slots: generateSlotsFromOpenings(dayOpenings)
       });
     });
 }
 
-function generateSlots(start: Date, end: Date): string[] {
+function generateSlotsFromOpenings(openings: Event[]): string[] {
+  const slots = [];
+  for (const opening of openings) {
+    slots.push(...generateSlotsFromDates(opening.starts_at, opening.ends_at))
+  }
+  return slots;
+}
+
+function generateSlotsFromDates(start: Date, end: Date): string[] {
   const slots = [];
   for (let date = start; date < end; date = addMinutes(date, 30)) {
     slots.push(format(date, 'HH:mm'))

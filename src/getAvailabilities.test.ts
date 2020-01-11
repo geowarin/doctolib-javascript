@@ -43,6 +43,35 @@ describe('getAvailabilities', () => {
     });
   });
 
+  describe('two openings on the same day', () => {
+    beforeEach(async () => {
+      await knex('events').insert([
+        {
+          kind: 'opening',
+          starts_at: new Date('2014-08-04 09:00'),
+          ends_at: new Date('2014-08-04 10:00'),
+        }, {
+          kind: 'opening',
+          starts_at: new Date('2014-08-04 14:00'),
+          ends_at: new Date('2014-08-04 15:00'),
+        }
+      ])
+    });
+
+    it('should fetch availabilities correctly', async () => {
+      const availabilities = await getAvailabilities(new Date('2014-08-04'));
+
+      expect(availabilities.length).toBe(7);
+
+      expect(availabilities[0].slots)
+        .toEqual(['09:00', '09:30', '14:00', '14:30']);
+
+      // all other slots are empty
+      expect(availabilities.slice(1).flatMap(a => a.slots))
+        .toEqual([])
+    });
+  });
+
   describe('simple case', () => {
     beforeEach(async () => {
       await knex('events').insert([
