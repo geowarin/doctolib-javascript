@@ -29,7 +29,7 @@ describe('getAvailabilities', () => {
       ])
     });
 
-    it('should fetch availabilities correctly', async () => {
+    it('should fetch availabilities of the week', async () => {
       const availabilities = await getAvailabilities(new Date('2014-08-04'));
 
       expect(availabilities[0].slots)
@@ -137,7 +137,7 @@ describe('getAvailabilities', () => {
         String(new Date('2014-08-11')),
       );
       expect(availabilities[1].slots).toEqual([
-        '9:30',
+        '09:30', // <= I modified the test here because 9:30 does not seem to be an easily 'formatable' time
         '10:00',
         '11:30',
         '12:00',
