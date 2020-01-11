@@ -82,10 +82,28 @@ describe('getAvailabilities', () => {
     it('should subtract appointment from opening', async () => {
       const availabilities = await getAvailabilities(new Date('2014-08-04'));
 
-      expect(availabilities.length).toBe(7);
-
       expect(availabilities[0].slots)
         .toEqual(['09:00', '09:30', '10:00', '11:30']);
+    });
+  });
+
+  describe('recurring openings', () => {
+    beforeEach(async () => {
+      await knex('events').insert([
+        {
+          kind: 'opening',
+          starts_at: new Date('2014-08-04 09:00'),
+          ends_at: new Date('2014-08-04 10:00'),
+          weekly_recurring: true,
+        }
+      ])
+    });
+
+    it('should generate an opening the following week', async () => {
+      const availabilities = await getAvailabilities(new Date('2014-08-11'));
+
+      expect(availabilities[0].slots)
+        .toEqual(['09:00', '09:30', '10:00']);
     });
   });
 
