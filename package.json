@@ -9,14 +9,17 @@
     "test": "yarn db:migrate && jest --watch"
   },
   "dependencies": {
-    "knex": "^0.14.6",
-    "moment": "^2.22.1",
-    "sqlite3": "^4.0.0"
+    "knex": "0.20.6",
+    "sqlite3": "4.1.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-module-resolver": "^3.1.1",
-    "babel-preset-env": "^1.7.0",
-    "jest": "^23.1.0"
+    "@types/jest": "24.0.25",
+    "jest": "24.9.0",
+    "ts-jest": "24.3.0",
+    "typescript": "3.7.4"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   }
 }

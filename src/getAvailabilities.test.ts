@@ -1,4 +1,4 @@
-import knex from 'knexClient'
+import knex from '../knexClient'
 import getAvailabilities from './getAvailabilities'
 
 describe('getAvailabilities', () => {
