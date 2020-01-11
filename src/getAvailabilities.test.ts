@@ -103,7 +103,7 @@ describe('getAvailabilities', () => {
       const availabilities = await getAvailabilities(new Date('2014-08-11'));
 
       expect(availabilities[0].slots)
-        .toEqual(['09:00', '09:30', '10:00']);
+        .toEqual(['09:00', '09:30']);
     });
   });
 

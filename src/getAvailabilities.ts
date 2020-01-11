@@ -1,5 +1,5 @@
 import knex from '../knexClient'
-import {addDays, isSameDay, addMinutes, format} from 'date-fns';
+import {addDays, isSameDay, addMinutes, format, getDay} from 'date-fns';
 
 interface Availability {
   date: Date
@@ -10,7 +10,7 @@ interface Event {
   kind: 'opening' | 'appointment'
   starts_at: Date
   ends_at: Date
-  weekly_recurring?: boolean,
+  weekly_recurring: boolean,
 }
 
 export default async function getAvailabilities(date: Date): Promise<Availability[]> {
@@ -22,6 +22,10 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
     .where('starts_at', '>=', startDate)
     .where('ends_at', '<=', endDate)
   ;
+  const recurringOpening = await knex<Event>('events')
+    .where('kind', 'opening')
+    .where('weekly_recurring', true)
+  ;
   const appointments = await knex<Event>('events')
     .where('kind', 'appointment')
     .where('starts_at', '>=', startDate)
@@ -32,15 +36,18 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
     .map(n => {
       const currentDate = addDays(date, n);
       const dayOpenings = openings.filter(o => isSameDay(o.starts_at, currentDate));
+      const dayRecurringOpenings = recurringOpening.filter(o => getDay(o.starts_at) == getDay(currentDate));
+      const openingsOfTheDay = dayOpenings.concat(dayRecurringOpenings);
+
       const dayAppointments = appointments.filter(o => isSameDay(o.starts_at, currentDate));
 
-      if (!dayOpenings.length) {
+      if (!openingsOfTheDay.length) {
         return ({
           date: currentDate,
           slots: []
         });
       }
-      const openingSlots = generateSlotsFromEvents(dayOpenings);
+      const openingSlots = generateSlotsFromEvents(openingsOfTheDay);
       const availableSlots = removeAppointments(openingSlots, dayAppointments);
 
       return ({
