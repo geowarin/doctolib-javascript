@@ -17,3 +17,11 @@
   - Yes => this should be enforced by the database
   - For the purpose of the exercise, all `weekly_recurring` event should be used. IRL, we should probably consider
     those of the current year maybe?
+
+## TODO
+
+- Sanitize argument date (should be a date without time)
+- Ensure slots are valid (datetime - 1/2h periods)
+- Validate edge cases (midnight cases, openings or appointments spanning multiple days)
+    - Especially: Verify where query with `starts_at` and `ends_at`
+- Optimize queries
