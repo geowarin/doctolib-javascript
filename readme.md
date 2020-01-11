@@ -9,9 +9,11 @@
 
 ## Questions
   - Do `starts_at` and `ends_at` always fall on 1/2h dates
+  - Do `starts_at` and `ends_at` happen on the same day
   - How long should we look backwards for a `weekly_recurring` event ?
 
 ## Hypothesises
+  - Yes => this should be enforced by the database
   - Yes => this should be enforced by the database
   - For the purpose of the exercise, all `weekly_recurring` event should be used. IRL, we should probably consider
     those of the current year maybe?
