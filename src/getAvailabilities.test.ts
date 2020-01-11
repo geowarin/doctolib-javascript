@@ -1,5 +1,6 @@
 import knex from '../knexClient'
 import getAvailabilities from './getAvailabilities'
+import {formatISO} from 'date-fns';
 
 describe('getAvailabilities', () => {
   beforeEach(() => knex('events').truncate());
@@ -9,7 +10,7 @@ describe('getAvailabilities', () => {
     it('should fetch availabilities correctly', async () => {
       const availabilities = await getAvailabilities(new Date('2014-08-10')); // sunday
 
-      expect(availabilities.map(a => a.date))
+      expect(availabilities.map(a => formatISO(a.date, {representation: 'date'})))
         .toEqual(['2014-08-10', '2014-08-11', '2014-08-12', '2014-08-13', '2014-08-14', '2014-08-15', '2014-08-16']);
 
       expect(availabilities.flatMap(a => a.slots))
