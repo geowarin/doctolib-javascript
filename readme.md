@@ -24,4 +24,5 @@
 - Ensure slots are valid (datetime - 1/2h periods)
 - Validate edge cases (midnight cases, openings or appointments spanning multiple days)
     - Especially: Verify where query with `starts_at` and `ends_at`
+- Validate overlapping opening/ appointments 
 - Optimize queries
