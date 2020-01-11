@@ -9,7 +9,7 @@ describe('getAvailabilities', () => {
       await knex('events').insert([
         {
           kind: 'opening',
-          starts_at: new Date('2014-08-04 09:30'),
+          starts_at: new Date('2014-08-04 09:30'), // monday
           ends_at: new Date('2014-08-04 12:30'),
           weekly_recurring: true,
         },
@@ -22,7 +22,7 @@ describe('getAvailabilities', () => {
     })
 
     it('should fetch availabilities correctly', async () => {
-      const availabilities = await getAvailabilities(new Date('2014-08-10'))
+      const availabilities = await getAvailabilities(new Date('2014-08-10')) // sunday
       expect(availabilities.length).toBe(7)
 
       expect(String(availabilities[0].date)).toBe(
