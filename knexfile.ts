@@ -5,5 +5,6 @@ export const config = {
       filename: './db.sqlite',
     },
     useNullAsDefault: true,
+    debug: true,
   },
 };

@@ -22,11 +22,17 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
     .where('starts_at', '>=', startDate)
     .where('ends_at', '<=', endDate)
   ;
+  const appointments = await knex<Event>('events')
+    .where('kind', 'appointment')
+    .where('starts_at', '>=', startDate)
+    .where('ends_at', '<=', endDate)
+  ;
 
   return Array.from({length: 7}, (v, i) => i)
     .map(n => {
       const currentDate = addDays(date, n);
       const dayOpenings = openings.filter(o => isSameDay(o.starts_at, currentDate));
+      const dayAppointments = appointments.filter(o => isSameDay(o.starts_at, currentDate));
 
       if (!dayOpenings.length) {
         return ({
@@ -34,15 +40,22 @@ export default async function getAvailabilities(date: Date): Promise<Availabilit
           slots: []
         });
       }
+      const openingSlots = generateSlotsFromEvents(dayOpenings);
+      const availableSlots = removeAppointments(openingSlots, dayAppointments);
 
       return ({
         date: currentDate,
-        slots: generateSlotsFromOpenings(dayOpenings)
+        slots: availableSlots
       });
     });
 }
 
-function generateSlotsFromOpenings(openings: Event[]): string[] {
+function removeAppointments(openingSlots: string[], appointments: Event[]): string[] {
+  const appointmentSlots = generateSlotsFromEvents(appointments);
+  return openingSlots.filter(s => !appointmentSlots.includes(s));
+}
+
+function generateSlotsFromEvents(openings: Event[]): string[] {
   const slots = [];
   for (const opening of openings) {
     slots.push(...generateSlotsFromDates(opening.starts_at, opening.ends_at))
